@@ -5,6 +5,7 @@
 */
 #pragma once
 
+
 #include <iterator>
 #include <initializer_list>
 #include <stdexcept>
@@ -94,11 +95,10 @@ public:
     // template<class InputIt> constexpr iterator insert(const_iterator position, InputIt first, InputIt last);
     // constexpr iterator insert(const_iterator position, std::initializer_list<T> il);
     constexpr iterator erase(const_iterator position);
-    // TODO maybe...
-    //constexpr iterator erase(const_iterator first, const_iterator last);
+    constexpr iterator erase(iterator first, iterator last);
     constexpr void clear() noexcept;
     constexpr void resize(std::size_t n);
-    constexpr void resize(iterator begin, iterator end);
+    constexpr void resize(iterator first, iterator last);
 };
 
 template<typename T, std::size_t S>
@@ -371,8 +371,23 @@ constexpr typename fixed_vector<T,S>::iterator fixed_vector<T,S>::erase(const_it
     return &m_data[index];
 }
 
-// TODO maybe...
-// constexpr iterator erase(const_iterator first, const_iterator last);
+template<typename T, std::size_t S>
+constexpr typename fixed_vector<T,S>::iterator fixed_vector<T,S>::erase(iterator first, iterator last) {
+    const auto n = size() - static_cast<std::size_t>(std::distance(first, last));
+    if(first > last) {
+        throw std::runtime_error("ERROR: begin iterator cannot be greater than end iterator");
+    }
+    if(first < begin() || first > end()) {
+        throw std::runtime_error("ERROR: bad begin iterator");
+    } 
+    if(last > end() || last < begin()) {
+        throw std::runtime_error("ERROR: bad end iterator");
+    }
+    auto second_begin = begin() + std::distance(begin(), first);
+    std::copy(last, end(), second_begin);
+    m_size = n;
+    return end();
+}
 
 template<typename T, std::size_t S>
 constexpr void fixed_vector<T,S>::clear() noexcept {
@@ -387,14 +402,17 @@ constexpr void fixed_vector<T,S>::resize(std::size_t n) {
 }
 
 template<typename T, std::size_t S>
-constexpr void fixed_vector<T,S>::resize(fixed_vector<T,S>::iterator begin, fixed_vector<T,S>::iterator end) {
-    const auto n = static_cast<std::size_t>(std::distance(begin, end));
-    if(n > m_capacity) {
-        throw std::length_error("ERROR: fixed vector cannot resize to that length");
-    }
-    if(begin > end) {
+constexpr void fixed_vector<T,S>::resize(fixed_vector<T,S>::iterator first, fixed_vector<T,S>::iterator last) {
+    const auto n = static_cast<std::size_t>(std::distance(first, last));
+    if(first > last) {
         throw std::runtime_error("ERROR: begin iterator cannot be greater than end iterator");
+    }
+    if(first < begin() || first > end()) {
+        throw std::runtime_error("ERROR: bad begin iterator");
     } 
-    std::copy(begin, end, m_data);
+    if(last > end() || last < begin()) {
+        throw std::runtime_error("ERROR: bad end iterator");
+    } 
+    std::copy(first, last, m_data);
     m_size = n;
 }
