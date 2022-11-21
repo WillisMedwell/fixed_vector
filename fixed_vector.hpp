@@ -22,7 +22,7 @@ public:
     using reference              = T&;
     using const_reference        = const T&;
     using size_type              = std::size_t;
-    using difference_type        = std::ptrdiff_t;
+    using difference_type        = ptrdiff_t;
     using iterator               = T*;
     using const_iterator         = const T*;
     using reverse_iterator       = std::reverse_iterator<iterator>;
@@ -98,6 +98,7 @@ public:
     //constexpr iterator erase(const_iterator first, const_iterator last);
     constexpr void clear() noexcept;
     constexpr void resize(std::size_t n);
+    constexpr void resize(iterator begin, iterator end);
 };
 
 template<typename T, std::size_t S>
@@ -385,3 +386,15 @@ constexpr void fixed_vector<T,S>::resize(std::size_t n) {
     m_size = n;
 }
 
+template<typename T, std::size_t S>
+constexpr void fixed_vector<T,S>::resize(fixed_vector<T,S>::iterator begin, fixed_vector<T,S>::iterator end) {
+    const auto n = static_cast<std::size_t>(std::distance(begin, end));
+    if(n > m_capacity) {
+        throw std::length_error("ERROR: fixed vector cannot resize to that length");
+    }
+    if(begin > end) {
+        throw std::runtime_error("ERROR: begin iterator cannot be greater than end iterator");
+    } 
+    std::copy(begin, end, m_data);
+    m_size = n;
+}
