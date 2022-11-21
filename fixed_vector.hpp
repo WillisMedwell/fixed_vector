@@ -317,7 +317,7 @@ constexpr typename fixed_vector<T,S>::iterator fixed_vector<T,S>::emplace(const_
         throw std::length_error("ERROR: exceeded maximum capacity");
     }
     const auto index = static_cast<std::size_t>(position - m_data);
-    if(index < 0 or index >= (m_size)) [[unlikely]] {
+    if(index < 0 or index > (m_size)) [[unlikely]] {
         throw std::out_of_range("ERROR: iterator not in valid range");
     }
     //std::memcpy(&m_data[index+1], &m_data[index], (m_size-index)*sizeof(T));
@@ -332,7 +332,7 @@ constexpr typename fixed_vector<T,S>::iterator fixed_vector<T,S>::insert(const_i
         throw std::length_error("ERROR: exceeded maximum capacity");
     }
     const auto index = static_cast<std::size_t>(position - m_data);
-    if(index < 0 or index >= (m_size)) [[unlikely]] {
+    if(index < 0 or index > (m_size)) [[unlikely]] {
         throw std::out_of_range("ERROR: iterator not in valid range");
     }
     std::copy(begin()+index, end(), begin()+index+1);
@@ -346,7 +346,7 @@ constexpr typename fixed_vector<T,S>::iterator fixed_vector<T,S>::insert(const_i
         throw std::length_error("ERROR: exceeded maximum capacity");
     }
     const auto index = static_cast<std::size_t>(position - m_data);
-    if(index < 0 or index >= (m_size)) [[unlikely]] {
+    if(index < 0 or index > (m_size)) [[unlikely]] {
         throw std::out_of_range("ERROR: iterator not in valid range");
     }
     std::copy(begin()+index, end(), begin()+index+1);
