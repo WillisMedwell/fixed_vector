@@ -3,7 +3,7 @@
     Created by: Willis Medwell
     Date: 14/Nov/2022
 */
-#pragam once
+#pragma once
 
 #include <iterator>
 #include <initializer_list>
